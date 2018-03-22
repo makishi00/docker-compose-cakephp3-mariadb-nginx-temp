@@ -1,0 +1,27 @@
+#
+# Compose file version 3 reference: https://docs.docker.com/compose/compose-file/
+#
+version: '3.1'
+
+services:
+
+  # php-fpm: port 9000
+  app:
+    build: ./docker/app
+    volumes:
+      - .:/var/www/html
+    external_links:
+      - "${APP_DB_LINK:-back_db}:db"
+    networks:
+      - front
+      - back
+    restart: always
+    env_file: "${APP_ENV_FILE:-./config/env}"
+
+networks:
+  front:
+    external:
+      name: "${APP_FRONT_NETWORK:-front_default}"
+  back:
+    external:
+      name: "${APP_BACK_NETWORK:-back_default}"
